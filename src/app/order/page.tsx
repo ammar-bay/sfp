@@ -59,7 +59,7 @@ const Order = () => {
       });
       router.push("/order");
     }
-  }, [payment]);
+  }, [payment, router]);
 
   useEffect(() => {
     if (options) {
