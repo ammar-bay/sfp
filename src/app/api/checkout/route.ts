@@ -73,8 +73,8 @@ export async function POST(request: Request) {
           },
         ],
         mode: "payment",
-        success_url: `http://localhost:3000/order?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: "http://localhost:3000/order?payment=failed",
+        success_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/order?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/order?payment=failed`,
       });
 
       if (imageError) {
