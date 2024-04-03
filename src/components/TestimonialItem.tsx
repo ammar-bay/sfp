@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 
@@ -39,10 +40,12 @@ const TestimonialItem: React.FC<TestimonialItemProps> = ({
 
   return (
     <li className="md:flex-1 relative">
-      <img
+      <Image
         alt={alt}
         src={imgSrc}
         className="rounded-lg object-cover h-52 w-full"
+        width={300}
+        height={200}
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
       />
