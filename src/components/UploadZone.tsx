@@ -1,27 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
-import { useUploadThing } from "@/lib/uploadthing";
 import { Cloud, File, Loader2 } from "lucide-react";
 import Dropzone from "react-dropzone";
 import { Progress } from "./ui/progress";
-import { useToast } from "./ui/use-toast";
-import { Image } from "@/app/order/page";
 
 interface UploadDropzoneProps {
-  setImages: React.Dispatch<React.SetStateAction<Image[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
-const UploadDropzone = ({ setImages }: UploadDropzoneProps) => {
-  const router = useRouter();
+const allowedTypes = ["image/jpeg", "image/webp", "image/png"];
 
+const UploadDropzone = ({ setFiles }: UploadDropzoneProps) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const { toast } = useToast();
-
-  const { startUpload } = useUploadThing("imageUpload");
 
   const startSimulatedProgress = () => {
     setUploadProgress(0);
@@ -42,47 +35,20 @@ const UploadDropzone = ({ setImages }: UploadDropzoneProps) => {
   return (
     <Dropzone
       multiple={true}
+      maxFiles={50}
       onDrop={async (acceptedFile) => {
         setIsUploading(true);
 
         const progressInterval = startSimulatedProgress();
+        const filteredFiles = Array.from(acceptedFile).filter((file) =>
+          allowedTypes.includes(file.type)
+        );
 
-        // handle file uploading
-        const res = await startUpload(acceptedFile);
-
-        if (!res) {
-          return toast({
-            title: "Something went wrong",
-            description: "Please try again later",
-            variant: "destructive",
-          });
-        }
-
-        const [fileResponse] = res;
-
-        setImages((prevImages) => [
-          ...prevImages,
-          {
-            imageUrl: fileResponse?.url,
-            imageName: fileResponse?.name,
-          },
-        ]);
-
-        const key = fileResponse?.key;
-
-        if (!key) {
-          return toast({
-            title: "Something went wrong",
-            description: "Please try again later",
-            variant: "destructive",
-          });
-        }
+        setFiles((prev) => [...prev, ...filteredFiles]);
 
         clearInterval(progressInterval);
         setUploadProgress(100);
         setIsUploading(false);
-
-        // startPolling({ key });
       }}
     >
       {({ getRootProps, getInputProps, acceptedFiles }) => (
@@ -102,7 +68,7 @@ const UploadDropzone = ({ setImages }: UploadDropzoneProps) => {
                   and drop
                 </p>
                 <p className="text-xs text-zinc-500">
-                  (jpeg, jpg, png) upto 4MB
+                  (jpeg, webp, png) upto 4MB
                 </p>
               </div>
 
@@ -139,7 +105,8 @@ const UploadDropzone = ({ setImages }: UploadDropzoneProps) => {
                 type="file"
                 id="dropzone-file"
                 className="hidden"
-                accept=".jpeg,.jpg,.png"
+                accept=".jpeg,.webp,.png"
+                multiple
               />
             </label>
           </div>

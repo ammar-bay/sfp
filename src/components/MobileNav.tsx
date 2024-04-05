@@ -14,7 +14,7 @@ const MobileNav = () => {
 
   useEffect(() => {
     if (isOpen) toggleOpen();
-  }, [pathname, isOpen]);
+  }, [pathname]);
 
   const closeOnCurrent = (href: string) => {
     if (pathname === href) {
@@ -35,7 +35,7 @@ const MobileNav = () => {
             <li>
               <Link
                 onClick={() => closeOnCurrent("/order")}
-                className="flex items-center w-full font-semibold text-green-600"
+                className="flex items-center w-full font-semibold text-indigo-600"
                 href="/order"
               >
                 Get started

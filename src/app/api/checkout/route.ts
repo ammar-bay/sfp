@@ -37,6 +37,7 @@ export async function POST(request: Request) {
           user_email: email,
           price_options: options,
           total_price,
+          total_items: 2 * images.length * options.length,
         })
         .select()
         .returns<Orders[]>();
@@ -73,8 +74,9 @@ export async function POST(request: Request) {
           },
         ],
         mode: "payment",
-        success_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/order?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/order?payment=failed`,
+        success_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}/?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_FRONTEND_URL}`,
+        customer_email: email,
       });
 
       if (imageError) {

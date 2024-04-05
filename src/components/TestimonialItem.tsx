@@ -1,32 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaPlay, FaStop } from "react-icons/fa";
 
 interface TestimonialItemProps {
   imgSrc: string;
   audioSrc: string;
   alt: string;
+  isPlaying: number | null;
+  setIsPlaying: React.Dispatch<React.SetStateAction<number | null>>;
+  id: number;
 }
 
 const TestimonialItem: React.FC<TestimonialItemProps> = ({
   imgSrc,
   alt,
   audioSrc,
+  isPlaying,
+  setIsPlaying,
+  id,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handlePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying((prevState) => !prevState);
+    if (isPlaying === id) {
+      setIsPlaying(null);
+    } else {
+      setIsPlaying(id);
     }
   };
 
@@ -35,8 +37,24 @@ const TestimonialItem: React.FC<TestimonialItemProps> = ({
   };
 
   const handleAudioEnded = () => {
-    setIsPlaying(false);
+    setIsPlaying(null);
   };
+
+  useEffect(() => {
+    const currentAudioRef = audioRef.current;
+
+    if (isPlaying === id) {
+      currentAudioRef?.play();
+    } else {
+      currentAudioRef?.pause();
+      if (currentAudioRef) currentAudioRef.currentTime = 0; // Reset to start
+    }
+
+    return () => {
+      currentAudioRef?.pause();
+      if (currentAudioRef) currentAudioRef.currentTime = 0; // Reset to start
+    };
+  }, [isPlaying, id]);
 
   return (
     <li className="md:flex-1 relative">
@@ -56,7 +74,7 @@ const TestimonialItem: React.FC<TestimonialItemProps> = ({
         onClick={handlePlay}
       >
         {isHovering &&
-          (isPlaying ? (
+          (isPlaying === id ? (
             <FaStop className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl cursor-pointer" />
           ) : (
             <FaPlay className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-4xl cursor-pointer" />

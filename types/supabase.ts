@@ -68,29 +68,35 @@ export type Database = {
       }
       orders: {
         Row: {
+          created_at: string | null
           order_number: number
           order_status: string | null
           payment_status: string
           price_options: number[]
           stripe_session_id: string | null
+          total_items: number | null
           total_price: number
           user_email: string
         }
         Insert: {
+          created_at?: string | null
           order_number?: number
           order_status?: string | null
           payment_status?: string
           price_options: number[]
           stripe_session_id?: string | null
+          total_items?: number | null
           total_price: number
           user_email: string
         }
         Update: {
+          created_at?: string | null
           order_number?: number
           order_status?: string | null
           payment_status?: string
           price_options?: number[]
           stripe_session_id?: string | null
+          total_items?: number | null
           total_price?: number
           user_email?: string
         }
